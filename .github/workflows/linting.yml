@@ -1,0 +1,23 @@
+---
+name: Linting
+
+on: workflow_call
+
+jobs:
+  Linting:
+    name: Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Install necessary gems
+        run: bundle config set --local with 'development' && bundle install
+
+      - name: Run Code Linting
+        run: bundle exec rake lint
+

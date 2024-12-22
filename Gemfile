@@ -14,7 +14,6 @@ group :development do
   gem "byebug"
   gem "inspec", ">= 2.2.112" # We need InSpec for the test harness while developing.
   gem "minitest", "~> 5.8"
-  gem "mocha", "~> 2.1"
   gem "webmock"
   gem "rake"
   gem "chefstyle", "~> 2.2"
