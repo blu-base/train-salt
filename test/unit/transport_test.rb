@@ -4,7 +4,7 @@
 require_relative "../helper"
 
 # Load the class under test, the Plugin definition.
-require "train-local-rot13/transport"
+require "train-salt/transport"
 
 # Because InSpec is a Spec-style test suite, we're going to use MiniTest::Spec
 # here, for familiar look and feel. However, this isn't InSpec (or RSpec) code.
