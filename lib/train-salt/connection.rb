@@ -15,6 +15,8 @@ module TrainPlugins
     class Connection < Train::Plugins::Transport::BaseConnection
       attr_reader :options
 
+      attr_reader :token
+
       def initialize(options)
         super(options)
 
@@ -41,10 +43,18 @@ module TrainPlugins
 
         response = execute_request(http, request)
 
-        handle_response(response)["return"][0]["token"]
-
-      rescue => e
-        raise "Failed to authenticate with salt-api: #{e.message}"
+        case response
+        when Net::HTTPOK
+          JSON.parse(response.body)["return"][0]["token"]
+        when Net::HTTPUnauthorized
+          raise AuthenticationError, "Unauthorized: Incorrect username, password, or eauth."
+        when Net::HTTPNotAcceptable
+          raise BadRequest, "Requested Content-Type not available"
+        when Net::HTTPInternalServerError
+          raise SaltAPIError, "Internal Server Error: The salt-api encountered an issue."
+        else
+          raise BadRequest, "Unexpected response code: #{response.code}"
+        end
       end
 
       def file_via_connection(path, *args)
@@ -62,10 +72,10 @@ module TrainPlugins
       end
 
       def run_command_via_connection(cmd, opts = {}, &data_handler)
-        result = run_function("cmd.run", @host, args=[cmd])
+        result = run_function("cmd.run_all", @host, kwargs={"cmd": cmd})
 
-        stdout = result.values[0]["ret"]
-        stderr = ""
+        stdout = result.values[0]["ret"]["stdout"]
+        stderr = result.values[0]["ret"]["stderr"]
         exit_status = result.values[0]["retcode"]
 
         CommandResult.new(stdout, stderr, exit_status)
@@ -93,9 +103,20 @@ module TrainPlugins
 
         response = execute_request(http, request)
 
-        handle_response(response)["return"][0]
-      rescue => e
-        raise "Failed to run command via salt-api: #{e.message}"
+        case response
+        when Net::HTTPOK
+          JSON.parse(response.body)["return"][0]
+        when Net::HTTPBadRequest
+          raise BadRequest, "bad or malformed request"
+        when Net::HTTPUnauthorized
+          raise AuthenticationError, "Unauthorized: Incorrect username, password, or eauth."
+        when Net::HTTPNotAcceptable
+          raise BadRequest, "Requested Content-Type not available"
+        when Net::HTTPInternalServerError
+          raise SaltAPIError, "Internal Server Error: The salt-api encountered an issue."
+        else
+          raise BadRequest, "Unexpected response code: #{response.code}"
+        end
       end
 
       def close
@@ -113,10 +134,16 @@ module TrainPlugins
 
         response = execute_request(http, request)
 
-        handle_response(response)
-
-      rescue => e
-        raise AuthenticationError, "Failed to logout from salt-api: #{e.message}"
+        case response
+        when Net::HTTPOK
+          true
+        when Net::HTTPUnauthorized
+          raise AuthenticationError, "Unauthorized: Incorrect username, password, or eauth."
+        when Net::HTTPNotAcceptable
+          raise BadRequest, "Requested Content-Type not available."
+        else
+          raise SaltAPIError, "Unkown return type."
+        end
       end
 
       private def build_http_client(uri)
@@ -137,15 +164,6 @@ module TrainPlugins
           retries_left -= 1
           retry if retries_left > 0
           raise SaltAPIError, "Request failed after #{@retries}: #{e.message}"
-        end
-      end
-
-      private def handle_response(response)
-        case response
-        when Net::HTTPSuccess
-          JSON.parse(response.body)
-        else
-          raise BadRequest, "Salt API request faild: #{response.code} #{response.message}"
         end
       end
     end
