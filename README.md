@@ -39,8 +39,8 @@ configuration of the `salt-master` service and `salt-api` service are tightly
 coupled.
 
 Don't forget to enable `netapi` clients in the salt-master configuration.
-`train-salt` uses the `local` client and mostly the `cmd.run` execution module.
-Ensure your master's configuration contains:
+`train-salt` uses the `local` client and mostly the `cmd.run_all` execution
+module. Ensure your master's configuration contains:
 
 ```
 netapi_enable_clients:
@@ -61,7 +61,7 @@ external_auth:
     inspec-api-user:
       - '*':
          - test.*
-         - cmd.run
+         - cmd.run_all
 ```
 
 Don't forget to restart the `salt-master` and `salt-api` service after changing
