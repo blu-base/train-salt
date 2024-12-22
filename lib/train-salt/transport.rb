@@ -29,7 +29,6 @@ module TrainPlugins
       option :retries, default: 3,
              description: "Default retries to the salt-api. The default is 3"
 
-
       def connection(_instance_opts = nil)
         @connection ||= TrainPlugins::Salt::Connection.new(@options)
       end

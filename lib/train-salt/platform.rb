@@ -31,7 +31,7 @@ module TrainPlugins::Salt
       # Use release to report a version number.  You might use the version
       # of the plugin, or a version of an important underlying SDK, or a
       # version of a remote API.
-      #force_platform!("salt", release: TrainPlugins::Salt::VERSION)
+      # force_platform!("salt", release: TrainPlugins::Salt::VERSION)
     end
   end
 end

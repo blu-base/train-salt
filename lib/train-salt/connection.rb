@@ -1,7 +1,5 @@
 require "json" unless defined?(JSON)
 require "train" unless defined?(Train)
-require "net/http"
-require "uri"
 
 # Connection definition file for an example Train plugin.
 
@@ -30,7 +28,6 @@ module TrainPlugins
         @timeout = options[:timeout]
         @retries = options[:retries]
         @token = login
-
       end
 
       # Authenticate with the salt-api service and return a session token
@@ -38,7 +35,13 @@ module TrainPlugins
         uri = URI.parse("#{@url}/login")
         http = build_http_client(uri)
 
-        request = Net::HTTP::Post.new(uri.path, { 'Accept' => 'application/json', 'Content-Type' => 'application/json' })
+        request = Net::HTTP::Post.new(
+          uri.path, {
+            "Accept" => "application/json",
+            "Content-Type" => "application/json",
+          }
+        )
+
         request.body = { username: @username, password: @password, eauth: @eauth }.to_json
 
         response = execute_request(http, request)
@@ -72,7 +75,7 @@ module TrainPlugins
       end
 
       def run_command_via_connection(cmd, opts = {}, &data_handler)
-        result = run_function("cmd.run_all", @host, kwargs={"cmd": cmd})
+        result = run_function("cmd.run_all", @host, kwargs: { "cmd": cmd })
 
         stdout = result.values[0]["ret"]["stdout"]
         stderr = result.values[0]["ret"]["stderr"]
@@ -81,24 +84,26 @@ module TrainPlugins
         CommandResult.new(stdout, stderr, exit_status)
       end
 
-      def run_function(function="test.ping", target=nil, args = [], kwargs = {})
+      def run_function(function = "test.ping", target = nil, args = [], kwargs = {})
         uri = URI.parse("#{@url}/")
         http = build_http_client(uri)
 
         request = Net::HTTP::Post.new(
           uri.path,
           {
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'X-Auth-Token' => @token
-          })
+            "Accept" => "application/json",
+            "Content-Type" => "application/json",
+            "X-Auth-Token" => @token,
+          }
+        )
+
         request.body = {
           client: "local",
           tgt: target,
           fun: function,
           arg: args,
           kwarg: kwargs,
-          full_return: true
+          full_return: true,
         }.to_json
 
         response = execute_request(http, request)
@@ -126,9 +131,9 @@ module TrainPlugins
         request = Net::HTTP::Post.new(
           uri.path,
           {
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'X-Auth-Token' => @token
+            "Accept" => "application/json",
+            "Content-Type" => "application/json",
+            "X-Auth-Token" => @token,
           }
         )
 
@@ -148,7 +153,7 @@ module TrainPlugins
 
       private def build_http_client(uri)
         http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = uri.scheme == 'https'
+        http.use_ssl = uri.scheme == "https"
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE unless @ssl_verify
         http.open_timeout = @timeout
         http.read_timeout = @timeout
