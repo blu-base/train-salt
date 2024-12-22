@@ -16,7 +16,7 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
       - name: Install necessary gems
-        run: bundle config set --local with 'development'; bundle install
+        run: bundle config set --local with 'development' && bundle install
 
       - name: Run Code Unit Tests and Functional Tests
         run: bundle exec rake test
