@@ -1,5 +1,19 @@
-# A Rakefile defines tasks to help maintain your project.
-# Rake provides several task templates that are useful.
+#!/usr/bin/env rake
+require "bundler"
+require "bundler/gem_helper"
+require "rake/testtask"
+require "chefstyle"
+require "rubocop/rake_task"
+
+Bundler::GemHelper.install_tasks name: "train-salt"
+
+#------------------------------------------------------------------#
+#                    Code Style Tasks
+#------------------------------------------------------------------#
+RuboCop::RakeTask.new(:lint) do |task|
+  task.options << "--display-cop-names"
+  task.options << "-d"
+end
 
 #------------------------------------------------------------------#
 #                    Test Runner Tasks
@@ -7,13 +21,11 @@
 
 # This task template will make a task named 'test', and run
 # the tests that it finds.
-require "rake/testtask"
 
 Rake::TestTask.new do |t|
   t.libs.push "lib"
   t.test_files = FileList[
     "test/unit/*_test.rb",
-    "test/integration/*_test.rb",
     "test/functional/*_test.rb",
   ]
   t.verbose = true
@@ -24,18 +36,3 @@ Rake::TestTask.new do |t|
   t.warning = false
 end
 
-#------------------------------------------------------------------#
-#                    Code Style Tasks
-#------------------------------------------------------------------#
-require "rubocop/rake_task"
-
-RuboCop::RakeTask.new(:lint) do |t|
-  # Choices of rubocop rules to enforce are deeply personal.
-  # Here, we set things up so that your plugin will use the Bundler-installed
-  # train gem's copy of the Train project's rubocop.yml file (which
-  # is indeed packaged with the train gem).
-  require "train/globals"
-  train_rubocop_yml = File.join(Train.src_root, ".rubocop.yml")
-
-  t.options = ["--display-cop-names", "--config", train_rubocop_yml]
-end
