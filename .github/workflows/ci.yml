@@ -17,3 +17,5 @@ jobs:
   test:
     name: Test
     uses: ./.github/workflows/test.yml
+    needs:
+      - linting
