@@ -22,7 +22,7 @@ describe TrainPlugins::Salt::Connection do
 
   it "should inherit from the Train Connection base" do
     # For Class, '<' means 'is a descendant of'
-    (connection_class < Train::Plugins::Transport::BaseConnection).must_equal(true)
+    _(connection_class < Train::Plugins::Transport::BaseConnection).must_equal(true)
   end
 
   # Since this is a Local-type connection, we MUST implement these three.
@@ -32,7 +32,7 @@ describe TrainPlugins::Salt::Connection do
   }.each do |method_name|
     it "should provide a #{method_name}() method" do
       # false passed to instance_methods says 'don't use inheritance'
-      connection_class.instance_methods(false).must_include(method_name)
+      _(connection_class.instance_methods(false)).must_include(method_name)
     end
   end
 end

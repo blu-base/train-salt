@@ -42,5 +42,5 @@ Gem::Specification.new do |spec|
 
   # All plugins should mention train, > 1.4
   spec.add_dependency "train-core"
-  spec.add_dependency "json",  ">= 1.8", "< 3.0"
+  spec.add_dependency "json", ">= 1.8", "< 3.0"
 end

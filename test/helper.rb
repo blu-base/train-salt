@@ -1,6 +1,6 @@
-# Test helper file for example Train plugins
-
-# This file's job is to collect any libraries needed for testing, as well as provide
-# any utilities to make testing a plugin easier.
-
-require "train/plugin_test_helper"
+require "minitest/autorun"
+require "webmock/minitest"
+require "mocha/minitest"
+require_relative "../lib/train-salt/connection"
+require_relative "../lib/train-salt/errors"
+require_relative "../lib/train-salt/transport"

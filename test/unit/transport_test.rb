@@ -22,17 +22,17 @@ describe TrainPlugins::Salt::Transport do
 
   it "should be registered with the plugin registry without the train- prefix" do
     # Note that Train uses String keys here, not Symbols
-    Train::Plugins.registry.keys.wont_include("train-salt")
-    Train::Plugins.registry.keys.must_include("salt")
+    _(Train::Plugins.registry.keys).wont_include("train-salt")
+    _(Train::Plugins.registry.keys).must_include("salt")
   end
 
   it "should inherit from the Train plugin base" do
     # For Class, '<' means 'is a descendant of'
-    (plugin_class < Train.plugin(1)).must_equal(true)
+    _(plugin_class < Train.plugin(1)).must_equal(true)
   end
 
   it "should provide a connection() method" do
     # false passed to instance_methods says 'don't use inheritance'
-    plugin_class.instance_methods(false).must_include(:connection)
+    _(plugin_class.instance_methods(false)).must_include(:connection)
   end
 end
