@@ -1,0 +1,14 @@
+name: CI
+on:
+  - push
+  - pull_request
+
+# If changes are pushed to a PR, stop all running workflows before starting new ones
+concurrency:
+  group: ${{ github.head_ref || (github.repository == 'blu-base/train-salt' && github.run_id || github.ref_name) }}
+  cancel-in-progress: true
+
+jobs:
+  linting:
+    name: Linting
+    uses: ./.github/workflows/linting.yml
