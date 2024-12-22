@@ -4,8 +4,8 @@ name: Linting
 on: workflow_call
 
 jobs:
-  Linting:
-    name: Linting
+  test:
+    name: test
     runs-on: ubuntu-latest
 
     steps:
@@ -18,6 +18,6 @@ jobs:
       - name: Install necessary gems
         run: bundle install --with=development
 
-      - name: Run Code Linting
+      - name: Run Code Unit Tests and Functional Tests
         run: bundle exec rake test
 
