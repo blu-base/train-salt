@@ -75,7 +75,7 @@ module TrainPlugins
       end
 
       def run_command_via_connection(cmd, opts = {}, &data_handler)
-        result = run_function("cmd.run_all", @host, kwargs: { "cmd": cmd })
+        result = run_function("cmd.run_all", @host, [], { "cmd": cmd })
 
         stdout = result.values[0]["ret"]["stdout"]
         stderr = result.values[0]["ret"]["stderr"]
