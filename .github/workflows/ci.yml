@@ -12,3 +12,8 @@ jobs:
   linting:
     name: Linting
     uses: ./.github/workflows/linting.yml
+
+  # Unit and functional tests
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yml
